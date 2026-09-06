@@ -1,0 +1,22 @@
+# Exemple de manifeste ArgoCD Application pour catalog-service.
+# À dupliquer pour chaque microservice une fois son Helm chart prêt (phase 5).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: catalog-service
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/<owner>/ecommerce-gitops.git
+    targetRevision: main
+    path: apps/catalog-service
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ecommerce
+  syncPolicy:
+    automated:
+      prune: true      # supprime les ressources retirées du repo Git
+      selfHeal: true    # corrige automatiquement toute dérive manuelle du cluster
+    syncOptions:
+      - CreateNamespace=true
