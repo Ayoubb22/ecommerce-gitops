@@ -27,13 +27,11 @@ spec:
               path: {{ .Values.probes.liveness.path }}
               port: {{ .Values.service.port }}
             initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
-            failureThreshold: 6
           readinessProbe:
             httpGet:
               path: {{ .Values.probes.readiness.path }}
               port: {{ .Values.service.port }}
             initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
-            failureThreshold: 6
           {{- if .Values.env }}
           env:
             {{- toYaml .Values.env | nindent 12 }}

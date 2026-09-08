@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service-postgres
+  template:
+    metadata:
+      labels:
+        app: order-service-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: order
+            - name: POSTGRES_USER
+              value: order
+            - name: POSTGRES_PASSWORD
+              value: order
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service-postgres
+spec:
+  selector:
+    app: order-service-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

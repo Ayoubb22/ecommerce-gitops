@@ -1,0 +1,52 @@
+# RabbitMQ partagé, déployé une seule fois pour toute la plateforme
+# (contrairement aux Postgres/Redis qui sont dédiés à un seul service,
+# RabbitMQ est utilisé à la fois par order-service (producteur) et
+# notification-service (consommateur) - cf. cahier des charges §2).
+#
+# Appliqué directement avec kubectl (pas un chart Helm séparé), car c'est
+# une brique d'infra partagée, pas une "application" au sens du cahier des charges.
+#
+# Usage : kubectl apply -f platform/rabbitmq/rabbitmq.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3-management-alpine
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: management
+      port: 15672
+      targetPort: 15672

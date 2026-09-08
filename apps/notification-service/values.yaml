@@ -1,8 +1,8 @@
-replicaCount: 2
+replicaCount: 1
 
 image:
-  repository: <dockerhub-username>/notification-service   # ou ghcr.io/<owner>/notification-service
-  tag: "latest"      # mis à jour automatiquement par la CI (voir ecommerce-app)
+  repository: notification-service
+  tag: "local"
   pullPolicy: IfNotPresent
 
 service:
@@ -11,26 +11,32 @@ service:
 
 resources:
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 50m
+    memory: 64Mi
   limits:
-    cpu: 300m
-    memory: 256Mi
+    cpu: 200m
+    memory: 128Mi
 
 probes:
   liveness:
-    path: /actuator/health/liveness
-    initialDelaySeconds: 10
+    path: /actuator/health
+    initialDelaySeconds: 5
   readiness:
-    path: /actuator/health/readiness
+    path: /actuator/health
     initialDelaySeconds: 5
 
 autoscaling:
-  enabled: false   # activer pour au moins 2 services en phase 8 (cf. cahier des charges §4.5/§5)
+  enabled: false
   minReplicas: 2
   maxReplicas: 5
   targetCPUUtilizationPercentage: 70
 
-env: []
-  # - name: SPRING_DATASOURCE_URL
-  #   value: jdbc:postgresql://postgres-catalog:5432/catalog
+env:
+  - name: RABBITMQ_HOST
+    value: rabbitmq
+  - name: RABBITMQ_PORT
+    value: "5672"
+  - name: RABBITMQ_USER
+    value: guest
+  - name: RABBITMQ_PASSWORD
+    value: guest

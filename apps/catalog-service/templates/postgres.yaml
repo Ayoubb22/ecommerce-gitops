@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog-service-postgres
+  template:
+    metadata:
+      labels:
+        app: catalog-service-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: catalog
+            - name: POSTGRES_USER
+              value: catalog
+            - name: POSTGRES_PASSWORD
+              value: catalog
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-service-postgres
+spec:
+  selector:
+    app: catalog-service-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
