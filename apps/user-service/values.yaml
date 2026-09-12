@@ -20,10 +20,10 @@ resources:
 probes:
   liveness:
     path: /actuator/health/liveness
-    initialDelaySeconds: 15
+    initialDelaySeconds: 90
   readiness:
     path: /actuator/health/readiness
-    initialDelaySeconds: 10
+    initialDelaySeconds: 60
 
 autoscaling:
   enabled: false
